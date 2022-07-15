@@ -20,3 +20,27 @@ LARGE_FONT= ("Verdana", 12)
 NORM_FONT = ("Helvetica", 80)
 SMALL_FONT = ("Helvetica", 8)
 
+
+
+# list of the previous 30 beat times
+beat_times = []
+
+# list of previous 29 intervals between beats
+beat_intervals = []
+
+# list of heartrates 
+heartrates = []
+
+# detect R wave of heartbeat
+
+if R:
+    # remove first item from beat times and append current time
+    beat_times.append(datetime.now())
+    beat_times.pop(0)
+    
+    # add heartrate over last 30 beats
+    heartrates.append((beat_times[len(beat_times)] - beat_times[0]) / 30) 
+    
+
+
+
