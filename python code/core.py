@@ -50,7 +50,8 @@ while True:
         r_wave = True
     else:
         r_wave = False
-
+        # wait 10ms
+        time.sleep(0.010)
 
     if r_wave:
         # remove first item from beat times and append current time
@@ -68,18 +69,18 @@ while True:
         # enter alarm logic only if we have collected enough heartrates
         if len(heartrates) > 15:
             if lastHR < 50:
-                if statistics.mean(heartrates) > 40:
+                if 40 < statistics.mean(heartrates) < 50:
                     # mild alert
                     popupmsg("low heart rate detected", grey)
-                else:
+                elif statistics.mean(heartrates) < 40:
                     # high alert
                     popupmsg("low heart rate detected - dangerous", red)
 
             elif lastHR > 120:
-                if statistics.mean(heartrates) < 130:
+                if 120 < statistics.mean(heartrates) < 130:
                     # mild alert
                     popupmsg("high heart rate detected", grey)
-                else:
+                elif statistics.mean(heartrates) > 130:
                     # high alert
                     popupmsg("low heart rate detected - dangerous", red)
 
