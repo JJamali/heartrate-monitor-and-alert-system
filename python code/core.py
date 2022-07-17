@@ -105,8 +105,8 @@ while True:
                 off_check = True
 
                 if sum(heartrates[5:14]) == 0:
-                    # alert - monitor is off
+                    popupmsg("device removed", grey)
                     off_check = False
 
-            # wait 15ms until R is over
+            # wait 15ms until R wave is over
             time.sleep(0.015)
