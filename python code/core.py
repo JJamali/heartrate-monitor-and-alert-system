@@ -8,8 +8,10 @@ NORM_FONT = ("Helvetica", 80)
 SMALL_FONT = ("Helvetica", 8)
 
 # takes in string msg, returns pop up window when called with msg
-def popupmsg(msg):
+# color dictates background color
+def popupmsg(msg, color):
     popup = tk.Tk()
+    popup.configure(bg=color)
     popup.wm_title("!")
     label = tk.Label(popup, text=msg, font=NORM_FONT)
     label.pack(side="top", fill="x", pady=10)
@@ -33,13 +35,13 @@ beat_intervals = []
 heartrates = []
 
 r_wave = False
-arr_check = False
+off_check = False
 
 # run indefinitely to constantly detect heartbeat
 while True:
 
     input = ser.read()
-    print(input)
+    # print(input)
 
     #======R wave======
 
@@ -49,7 +51,7 @@ while True:
     else:
         r_wave = False
 
-    # detect R wave of heartbeat
+
     if r_wave:
         # remove first item from beat times and append current time
         beat_times.append(datetime.now())
@@ -60,31 +62,51 @@ while True:
 
         # add heartrate over last 30 beats to heartrates list
         heartrates.append(lastHR)
-        if len(heartrates) > 29:
+        if len(heartrates) > 15:
             heartrates.pop(0)
 
         # enter alarm logic only if we have collected enough heartrates
-        if len(heartrates) > 30:
+        if len(heartrates) > 15:
             if lastHR < 50:
                 if statistics.mean(heartrates) > 40:
-                    #mild alert
+                    # mild alert
+                    popupmsg("low heart rate detected", grey)
                 else:
-                    #high alert
+                    # high alert
+                    popupmsg("low heart rate detected - dangerous", red)
 
             elif lastHR > 120:
-                Enter high HR detection algorithm
-
+                if statistics.mean(heartrates) < 130:
+                    # mild alert
+                    popupmsg("high heart rate detected", grey)
+                else:
+                    # high alert
+                    popupmsg("low heart rate detected - dangerous", red)
 
             # ======arrhythmia======
             # if difference between last two beats exceeds 30%
             if math.abs((lastHR - heartrates[len(heartrates) - 2])/lastHR) > 0.3:
-                arr_check = True
 
+                arrhythmic_beats = 0
+                for i in range(len(heartrates)):
+                    if math.abs(heartrates(i + 1) - heartRates(i)) / heartrates(i) > 0.3:
+                        arrhythmic_beats += 1
+
+                if arrhythmic_beats > 6:
+                    # high alert
+                    popupmsg("arrhythmia detected - dangerous", red)
+                elif arrhythmic_beats > 4:
+                    # low alert
+                    popupmsg("mild arrhythmia detected", grey)
+
+
+            # ======off check======
+            if lastHR == 0:
+                off_check = True
+
+                if sum(heartrates[5:14]) == 0:
+                    # alert - monitor is off
+                    off_check = False
 
             # wait 15ms until R is over
             time.sleep(0.015)
-
-    
-
-
-
