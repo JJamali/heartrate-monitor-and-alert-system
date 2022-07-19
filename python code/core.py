@@ -23,7 +23,7 @@ def popupmsg(msg, color):
     popup.mainloop()
 
 # connect python to arduino serial readings
-ser = serial.Serial('COM3', 9600, timeout=1)
+ser = serial.Serial('COM4', 9600)
 #ser.baudrate = 9600
 #ser.port = 'COM3' # note: this changes with different environments
 #ser.open()
