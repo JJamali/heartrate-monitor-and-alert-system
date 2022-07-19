@@ -1,6 +1,8 @@
 import serial
 import tkinter as tk
 import statistics
+import time
+import math
 
 # set up fonts for pop up window stuff
 LARGE_FONT= ("Verdana", 12)
@@ -20,9 +22,11 @@ def popupmsg(msg, color):
     popup.mainloop()
 
 # connect python to arduino serial readings
-ser = serial.Serial()
-ser.baudrate = 9600
-ser.port = 'PORTNAME' # note: this changes with different environments
+ser = serial.Serial('COM3', 9600, timeout=1)
+#ser.baudrate = 9600
+#ser.port = 'COM3' # note: this changes with different environments
+#ser.open()
+print(ser.name)
 
 
 # list of the previous 30 beat times
@@ -40,74 +44,94 @@ off_check = False
 # run indefinitely to constantly detect heartbeat
 while True:
 
-    input = ser.read()
-    # print(input)
+    print("Test1")
+    try:
+        input = ser.readline()
+    except Exception:
+        print("brocken :(")
+    print("Test 2")
+    print("into converter" + str(input))
+    
+    # code to extract number from input data
+    # use try-except to omit any non-numerical data and prevent crashes
+    try:
+        num = ""
+        for c in str(input):
+            if c.isdigit():
+                num += c
+        input = int(num)    
+        print("cleaned input =" + input)
+         #======R wave======
 
-    #======R wave======
-
-    # check if in R wave
-    if {{input > val}}:
-        r_wave = True
-    else:
-        r_wave = False
-        # wait 10ms
-        time.sleep(0.010)
-
-    if r_wave:
-        # remove first item from beat times and append current time
-        beat_times.append(datetime.now())
-        if len(beat_times) > 2:
-            beat_times.pop(0)
-
-        lastHR = 60000 / (beat_times[1] - beat_times[0])
-
-        # add heartrate over last 30 beats to heartrates list
-        heartrates.append(lastHR)
-        if len(heartrates) > 15:
-            heartrates.pop(0)
-
-        # enter alarm logic only if we have collected enough heartrates
-        if len(heartrates) > 15:
-            if lastHR < 50:
-                if 40 < statistics.mean(heartrates) < 50:
-                    # mild alert
-                    popupmsg("low heart rate detected", grey)
-                elif statistics.mean(heartrates) < 40:
-                    # high alert
-                    popupmsg("low heart rate detected - dangerous", red)
-
-            elif lastHR > 120:
-                if 120 < statistics.mean(heartrates) < 130:
-                    # mild alert
-                    popupmsg("high heart rate detected", grey)
-                elif statistics.mean(heartrates) > 130:
-                    # high alert
-                    popupmsg("low heart rate detected - dangerous", red)
-
-            # ======arrhythmia======
-            # if difference between last two beats exceeds 30%
-            if math.abs((lastHR - heartrates[len(heartrates) - 2])/lastHR) > 0.3:
-
-                arrhythmic_beats = 0
-                for i in range(len(heartrates)):
-                    if math.abs(heartrates(i + 1) - heartRates(i)) / heartrates(i) > 0.3:
-                        arrhythmic_beats += 1
-
-                if arrhythmic_beats > 6:
-                    # high alert
-                    popupmsg("arrhythmia detected - dangerous", red)
-                elif arrhythmic_beats > 4:
-                    # low alert
-                    popupmsg("mild arrhythmia detected", grey)
-
-
-            # ======off check======
-            if lastHR == 0:
-                off_check = True
-
-                if sum(heartrates[5:14]) == 0:
-                    popupmsg("device removed", grey)
-                    off_check = False
-
-            # wait 15ms until R wave is over
-            time.sleep(0.015)
+        # check if in R wave
+        if 600 < input < 650:
+            r_wave = True
+        else:
+            r_wave = False
+            # wait 10ms
+            time.sleep(0.010)
+            
+    
+        if r_wave:
+            print("R wave")
+            # remove first item from beat times and append current time
+            beat_times.append(time.datetime.now())
+            if len(beat_times) > 2:
+                beat_times.pop(0)
+    
+            lastHR = 60000 / (beat_times[1] - beat_times[0])
+    
+            # add heartrate over last 30 beats to heartrates list
+            heartrates.append(lastHR)
+            if len(heartrates) > 15:
+                heartrates.pop(0)
+    
+            # enter alarm logic only if we have collected enough heartrates
+            if len(heartrates) > 15:
+                if lastHR < 50:
+                    if 40 < statistics.mean(heartrates) < 50:
+                        # mild alert
+                        popupmsg("low heart rate detected", "grey")
+                    elif statistics.mean(heartrates) < 40:
+                        # high alert
+                        popupmsg("low heart rate detected - dangerous", "red")
+    
+                elif lastHR > 120:
+                    if 120 < statistics.mean(heartrates) < 130:
+                        # mild alert
+                        popupmsg("high heart rate detected", "grey")
+                    elif statistics.mean(heartrates) > 130:
+                        # high alert
+                        popupmsg("low heart rate detected - dangerous", "red")
+    
+                # ======arrhythmia======
+                # if difference between last two beats exceeds 30%
+                if math.abs((lastHR - heartrates[len(heartrates) - 2])/lastHR) > 0.3:
+    
+                    arrhythmic_beats = 0
+                    for i in range(len(heartrates)):
+                        if math.abs(heartrates(i + 1) - heartrates(i)) / heartrates(i) > 0.3:
+                            arrhythmic_beats += 1
+    
+                    if arrhythmic_beats > 6:
+                        # high alert
+                        popupmsg("arrhythmia detected - dangerous", "red")
+                    elif arrhythmic_beats > 4:
+                        # low alert
+                        popupmsg("mild arrhythmia detected", "grey")
+    
+    
+                # ======off check======
+                if lastHR == 0:
+                    off_check = True
+    
+                    if sum(heartrates[5:14]) == 0:
+                        popupmsg("device removed", "grey")
+                        off_check = False
+    
+                # wait 15ms until R wave is over
+                time.sleep(0.015)
+    
+    except Exception:
+        print('exception')
+        pass
