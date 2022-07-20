@@ -53,13 +53,15 @@ while True:
     
     # code to extract number from input data
     # use try-except to omit any non-numerical data and prevent crashes
-    num = ""
+    extracted_num = ""
 
     for c in str(input):
         if c.isdigit():
-            num += c
-    if num != "":
-        input = int(num)
+            extracted_num += c
+        elif len(extracted_num) > 0:
+            break
+    if extracted_num != "":
+        input = int(extracted_num)
     else:
         input = 0
         
