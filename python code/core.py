@@ -54,7 +54,7 @@ while True:
     # code to extract number from input data
     # use try-except to omit any non-numerical data and prevent crashes
     num = ""
-    print(input)
+
     for c in str(input):
         if c.isdigit():
             num += c
