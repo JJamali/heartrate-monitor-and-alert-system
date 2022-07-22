@@ -9,9 +9,14 @@ Circuit looks like this:
 
 Made by:
 
-Jordan Jamali \n
-Sam Zhu \n
-Matthew Sun-Ren \n
-Zain-Ul-Abideen Altaf \n
-Sam Suys \n
-Karyn Lee \n
+Jordan Jamali 
+
+Sam Zhu 
+
+Matthew Sun-Ren 
+
+Zain-Ul-Abideen Altaf 
+
+Sam Suys 
+
+Karyn Lee 
